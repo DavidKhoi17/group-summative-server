@@ -7,6 +7,7 @@ var mongoose = require('mongoose')
 
 var Item = require('./item-model')
 var Type = require('./type-model')
+var User = require('./user-model')
 
 //setup express server
 var app = express()
@@ -114,6 +115,52 @@ router.put('/types/:id', (req, res) => {
 
 router.delete('/types/:id', (req, res) => {
 	Type.deleteOne({id:req.params.id})
+	.then(() => {
+		res.json('deleted')
+	})	
+})
+
+//---------------------users route---------------------
+router.get('/users', (req, res) => {
+	User.find()
+	.then((users) => {
+		res.json(users)
+	})
+})
+
+router.get('/users/:id', (req, res) => {
+	User.findOne({id:req.params.id})
+	.then((user) => {
+		res.json(user)
+	})
+})
+
+router.post('/users', (res, req) => {
+	var user = new User()
+	user.id = Date.now()
+
+	var data = req.body
+	Object.assign(user, data)
+	user.save()
+	.then((user) => {
+		res.json(user)
+	})
+})
+
+router.put('/users/:id', (req, res) => {
+	User.findOne({id:req.params.id})
+	.then((user) => {
+		var data = req.body
+		Object.assign(user, data)
+		return user.save()
+	})
+	.then((user) => {
+		res.json(user)
+	})
+})
+
+router.delete('/users/:id', (req, res) => {
+	User.deleteOne({id:req.params.id})
 	.then(() => {
 		res.json('deleted')
 	})	
